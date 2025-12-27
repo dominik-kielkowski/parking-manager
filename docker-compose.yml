@@ -1,0 +1,6 @@
+﻿services:
+  parking-manager:
+    image: parking-manager
+    build:
+      context: .
+      dockerfile: parking-manager/Dockerfile
