@@ -1,0 +1,29 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 20px;
+}
+
+#spotsGrid {
+    display: grid;
+    grid-template-columns: repeat(10, 60px);
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.spotButton {
+    padding: 15px;
+    border: 1px solid #333;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: green;
+    color: white;
+}
+
+.spotButton.taken {
+    background-color: black;
+    color: #aaa;
+    cursor: not-allowed;
+}

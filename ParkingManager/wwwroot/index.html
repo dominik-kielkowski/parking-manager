@@ -5,6 +5,7 @@
     <title>Login with GitHub</title>
 </head>
 <body>
+
 <h1>GitHub Login</h1>
 <button id="loginBtn">Login with GitHub</button>
 
@@ -13,5 +14,16 @@
         window.location.href = "/auth/login";
     });
 </script>
+
+<h1>Book a spot</h1>
+<button id="bookBtn">Book a spot</button>
+
+<script>
+    document.getElementById('bookBtn').addEventListener('click', () => {
+        window.location.href = "/parking/book?spotNumber=A1";
+    });
+</script>
+
+
 </body>
 </html>

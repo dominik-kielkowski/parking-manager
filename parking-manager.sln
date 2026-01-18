@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "parking-manager", "parking-manager\parking-manager.csproj", "{214C73D5-232F-4CC0-9A60-0B1FFEFDD2A9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParkingManager", "ParkingManager\ParkingManager.csproj", "{214C73D5-232F-4CC0-9A60-0B1FFEFDD2A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
