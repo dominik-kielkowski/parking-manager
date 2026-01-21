@@ -1,4 +1,7 @@
 using parking_manager;
+using ParkingManager.ParkingManager.Application;
+using ParkingManager.ParkingManager.Infrastructure;
+using ParkingManager.ParkingManager.Infrastructure.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +13,10 @@ builder.AddGitHubAuthentication();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IParkingRepository, ParkingRepository>();
+
 
 var app = builder.Build();
 
@@ -27,14 +34,14 @@ using (var scope = app.Services.CreateScope())
     ParkingSpotSeeder.Instance.Seed(context, factory);
 }
 
+app.UseStaticFiles();
+
 app.UseSwagger();
 app.UseSwaggerUI(c => 
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
     c.RoutePrefix = string.Empty;
 });
-
-app.UseStaticFiles();
 
 app.UseAuthentication();
 app.UseAuthorization();

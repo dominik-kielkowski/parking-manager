@@ -1,4 +1,5 @@
 using System.Text.Json;
+using ParkingManager.ParkingManager.Domain;
 
 namespace parking_manager
 {

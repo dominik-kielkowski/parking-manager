@@ -1,50 +1,44 @@
-using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
-using parking_manager;
+using ParkingManager.ParkingManager.Application;
+using ParkingManager.ParkingManager.Infrastructure;
+
+namespace ParkingManager.ParkingManager.API;
 
 [ApiController]
 [Route("[controller]")]
 public class ParkingController : ControllerBase
 {
-    private readonly AppDbContext _context;
-    private static readonly string Path = "ParkingSpots.json";
-    private static List<ParkingSpot> _parkingSpots;
+    private readonly IParkingRepository _repository;
 
-    public ParkingController(AppDbContext context)
+    public ParkingController(IParkingRepository repository)
     {
-        _context = context;
-        
-        if (System.IO.File.Exists(Path))
-        {
-            var json = System.IO.File.ReadAllText(Path);
-            _parkingSpots = JsonSerializer.Deserialize<List<ParkingSpot>>(json);
-        }
-        else
-        {
-            _parkingSpots = new List<ParkingSpot>();
-        }
+        _repository = repository;
     }
-    
-    [HttpGet("book")]
-    public string BookParking(string spotNumber)
-    {
-        var spot = _parkingSpots.FirstOrDefault(x => x.SpotNumber == spotNumber);
-        
-        if (spot.IsTaken == false)
-        {
-            spot.IsTaken = true;
-        }
 
-        return $"parking sopt {spot.SpotNumber} has been booked";
+    [HttpPost("book")]
+    public async Task<IActionResult> BookParking([FromQuery] string spotNumber)
+    {
+        if (!(User.Identity?.IsAuthenticated ?? false))
+            return Unauthorized();
+
+        var githubId = User.FindFirst("urn:github:id")?.Value;
+        if (githubId == null) return BadRequest("GitHub ID missing");
+
+        try
+        {
+            var message = await _repository.BookSpotAsync(githubId, spotNumber);
+            return Ok(new { Message = message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { Error = ex.Message });
+        }
     }
 
     [HttpGet("spots")]
-    public IActionResult GetParkingSpotsJson()
+    public async Task<IActionResult> GetParkingSpotsJson()
     {
-        _context.ParkingSpots.ToList();
-        string path = "ParkingManager.Infrastructure/Data/ParkingSpots.json";
-        List<ParkingSpot> parkingSpots = path.SeedFromJson();
-    
-        return Ok(parkingSpots);
+        var result = await _repository.GetSpotsStatusAsync();
+        return Ok(result);
     }
 }

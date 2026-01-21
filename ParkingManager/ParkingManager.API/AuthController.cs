@@ -1,11 +1,20 @@
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using ParkingManager.ParkingManager.Application;
+
+namespace ParkingManager.ParkingManager.API;
 
 [ApiController]
 [Route("[controller]")]
 public class AuthController : ControllerBase
 {
+    private readonly IAuthRepository _authRepository;
+
+    public AuthController(IAuthRepository authRepository)
+    {
+        _authRepository = authRepository;
+    }
+
     [HttpGet("login")]
     public IActionResult Login()
     {
@@ -14,19 +23,25 @@ public class AuthController : ControllerBase
     }
 
     [HttpGet("callback")]
-    public IActionResult Callback()
+    public async Task<IActionResult> Callback()
     {
-        if (User.Identity?.IsAuthenticated ?? false)
-        {
-            return Redirect("/index.html");
-        }
+        var user = await _authRepository.HandleGitHubCallbackAsync(User);
+        if (user == null)
+            return Unauthorized();
 
-        return Unauthorized();
+        return Redirect("/index.html");
     }
 
-    [HttpGet("logout")]
-    public IActionResult Logout()
+    [HttpGet("current")]
+    public IActionResult CurrentUser()
     {
-        return SignOut(new AuthenticationProperties { RedirectUri = "/" }, CookieAuthenticationDefaults.AuthenticationScheme);
+        return Ok(_authRepository.GetCurrentUser(User));
+    }
+
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        await _authRepository.LogoutAsync(HttpContext);
+        return Ok(new { Message = "Logged out" });
     }
 }

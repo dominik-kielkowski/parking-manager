@@ -2,28 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login with GitHub</title>
+    <title>Parking Manager</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<h1>GitHub Login</h1>
-<button id="loginBtn">Login with GitHub</button>
+<header id="header">
+    <span id="username"></span>
+    <button id="authBtn">Login with GitHub</button>
+</header>
 
-<script>
-    document.getElementById('loginBtn').addEventListener('click', () => {
-        window.location.href = "/auth/login";
-    });
-</script>
+<h1>Parking Spots</h1>
+<div id="spotsGrid"></div>
 
-<h1>Book a spot</h1>
-<button id="bookBtn">Book a spot</button>
-
-<script>
-    document.getElementById('bookBtn').addEventListener('click', () => {
-        window.location.href = "/parking/book?spotNumber=A1";
-    });
-</script>
-
+<script src="js/header.js"></script>
+<script src="js/spots.js"></script>
 
 </body>
 </html>

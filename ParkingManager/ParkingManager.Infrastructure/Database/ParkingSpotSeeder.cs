@@ -1,4 +1,5 @@
 using parking_manager;
+using ParkingManager.ParkingManager.Infrastructure.Database;
 
 public class ParkingSpotSeeder
 {

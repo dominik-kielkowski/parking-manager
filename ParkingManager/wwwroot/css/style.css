@@ -2,6 +2,38 @@ body {
     font-family: Arial, sans-serif;
     text-align: center;
     margin: 20px;
+    background: #2B2E3C;
+}
+
+header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 15px 30px;
+    color: #E3E3DB;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    color: #E3E3DB;
+}
+
+#authBtn {
+    background-color: #E3E3DB;
+    color: #2B2E3C;
+    border: 1px solid transparent;
+    padding: 8px 16px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#authBtn:hover {
+    background-color: #2B2E3C;
+    color: #E3E3DB;
+    border-color: #E3E3DB;
 }
 
 #spotsGrid {
@@ -12,18 +44,24 @@ body {
     margin-top: 20px;
 }
 
+#username {
+    margin-right: 15px;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
 .spotButton {
     padding: 15px;
     border: 1px solid #333;
     border-radius: 5px;
     font-weight: bold;
     cursor: pointer;
-    background-color: green;
-    color: white;
+    background-color: #6EB92B;
+    color: #E3E3DB;
 }
 
 .spotButton.taken {
-    background-color: black;
-    color: #aaa;
+    background-color: #B02F2B;
+    color: #E3E3DB;
     cursor: not-allowed;
 }

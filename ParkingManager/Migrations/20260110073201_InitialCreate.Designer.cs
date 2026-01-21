@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using parking_manager;
+using ParkingManager.ParkingManager.Infrastructure.Database;
 
 #nullable disable
 

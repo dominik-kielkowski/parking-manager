@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    const spotsUrl = 'http://localhost:5005/parking/spots';
-    const bookUrl = 'http://localhost:5005/parking/book?spotNumber=';
+    const spotsUrl = '/parking/spots';
+    const bookUrl = '/parking/book?spotNumber=';
 
     async function loadSpots() {
         try {
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 btn.onclick = async () => {
-                    const res = await fetch(`${bookUrl}${spot.spotNumber}`);
+                    const res = await fetch(`${bookUrl}${spot.spotNumber}`, { method: 'POST' });
                     const text = await res.text();
 
                     btn.classList.add('taken');

@@ -1,5 +1,7 @@
 using System.Text.Json;
-using parking_manager;
+using ParkingManager.ParkingManager.Domain;
+
+namespace ParkingManager.ParkingManager.Infrastructure;
 
 public class JsonParkingSpotFactory : IParkingSpotFactory
 {
