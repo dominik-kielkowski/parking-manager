@@ -10,13 +10,10 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddSqliteDatabase<AppDbContext>(builder.Configuration);
 builder.AddGitHubAuthentication();
+builder.Services.ConfigureMediatR();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-builder.Services.AddScoped<IAuthRepository, AuthRepository>();
-builder.Services.AddScoped<IParkingRepository, ParkingRepository>();
-
 
 var app = builder.Build();
 

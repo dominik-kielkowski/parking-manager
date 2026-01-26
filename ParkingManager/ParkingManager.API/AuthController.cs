@@ -1,6 +1,8 @@
+using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
-using ParkingManager.ParkingManager.Application;
+using ParkingManager.ParkingManager.Infrastructure;
+using ParkingManager.ParkingManager.Infrastructure.MediatR.Auth;
 
 namespace ParkingManager.ParkingManager.API;
 
@@ -8,40 +10,40 @@ namespace ParkingManager.ParkingManager.API;
 [Route("[controller]")]
 public class AuthController : ControllerBase
 {
-    private readonly IAuthRepository _authRepository;
+    private readonly IMediator _mediator;
 
-    public AuthController(IAuthRepository authRepository)
+    public AuthController(IMediator mediator)
     {
-        _authRepository = authRepository;
+        _mediator = mediator;
     }
 
     [HttpGet("login")]
-    public IActionResult Login()
+    public async Task<IActionResult> Login()
     {
-        var redirectUrl = Url.Action("Callback");
+        var redirectUrl = await _mediator.Send(new LoginCommand());
         return Challenge(new AuthenticationProperties { RedirectUri = redirectUrl }, "GitHub");
     }
 
     [HttpGet("callback")]
     public async Task<IActionResult> Callback()
     {
-        var user = await _authRepository.HandleGitHubCallbackAsync(User);
-        if (user == null)
-            return Unauthorized();
+        var user = await _mediator.Send(new GitHubCallbackCommand(User));
+        if (user == null) return Unauthorized();
 
         return Redirect("/index.html");
     }
 
     [HttpGet("current")]
-    public IActionResult CurrentUser()
+    public async Task<IActionResult> CurrentUser()
     {
-        return Ok(_authRepository.GetCurrentUser(User));
+        var currentUser = await _mediator.Send(new GetCurrentUserQuery(User));
+        return Ok(currentUser);
     }
 
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
-        await _authRepository.LogoutAsync(HttpContext);
+        await _mediator.Send(new LogoutCommand(HttpContext));
         return Ok(new { Message = "Logged out" });
     }
 }

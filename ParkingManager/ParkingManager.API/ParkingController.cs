@@ -1,6 +1,6 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using ParkingManager.ParkingManager.Application;
-using ParkingManager.ParkingManager.Infrastructure;
+using ParkingManager.ParkingManager.Infrastructure.MediatR.Parking;
 
 namespace ParkingManager.ParkingManager.API;
 
@@ -8,11 +8,11 @@ namespace ParkingManager.ParkingManager.API;
 [Route("[controller]")]
 public class ParkingController : ControllerBase
 {
-    private readonly IParkingRepository _repository;
+    private readonly IMediator _mediator;
 
-    public ParkingController(IParkingRepository repository)
+    public ParkingController(IMediator mediator)
     {
-        _repository = repository;
+        _mediator = mediator;
     }
 
     [HttpPost("book")]
@@ -26,7 +26,7 @@ public class ParkingController : ControllerBase
 
         try
         {
-            var message = await _repository.BookSpotAsync(githubId, spotNumber);
+            var message = await _mediator.Send(new BookParkingCommand(githubId, spotNumber));
             return Ok(new { Message = message });
         }
         catch (InvalidOperationException ex)
@@ -38,7 +38,7 @@ public class ParkingController : ControllerBase
     [HttpGet("spots")]
     public async Task<IActionResult> GetParkingSpotsJson()
     {
-        var result = await _repository.GetSpotsStatusAsync();
+        var result = await _mediator.Send(new GetParkingSpotsQuery());
         return Ok(result);
     }
 }
