@@ -1,4 +1,5 @@
 using System.Text.Json;
+using ParkingManager.ParkingManager.Application.Interfaces;
 using ParkingManager.ParkingManager.Domain;
 
 namespace ParkingManager.ParkingManager.Infrastructure;

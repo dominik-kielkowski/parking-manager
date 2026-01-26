@@ -1,7 +1,7 @@
 using System.Text.Json;
 using ParkingManager.ParkingManager.Domain;
 
-namespace parking_manager
+namespace ParkingManager.ParkingManager.Infrastructure.Database
 {
     public static class ParkingSpotExtensions
     {

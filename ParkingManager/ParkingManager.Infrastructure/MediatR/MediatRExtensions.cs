@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace ParkingManager.ParkingManager.Infrastructure;
+namespace ParkingManager.ParkingManager.Infrastructure.MediatR;
 
 public static class MediatRExtensions
 {
