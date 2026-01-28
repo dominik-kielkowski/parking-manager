@@ -27,7 +27,7 @@ using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-    var factory = new JsonParkingSpotFactory("Data/ParkingSpots.json");
+    var factory = new JsonParkingSpotFactory("ParkingManager.Infrastructure/Data/ParkingSpots.json");
 
     ParkingSpotSeeder.Instance.Seed(context, factory);
 }

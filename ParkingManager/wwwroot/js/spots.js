@@ -16,6 +16,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 btn.textContent = spot.spotNumber;
                 btn.className = 'spotButton';
 
+                switch(spot.spotType) {
+                    case 0: // Regular
+                        btn.classList.add('regularSpot');
+                        break;
+                    case 1: // Disabled
+                        btn.classList.add('disabledSpot');
+                        break;
+                    case 2: // Manager
+                        btn.classList.add('managerSpot');
+                        break;
+                }
+
                 if (spot.isTaken) {
                     btn.classList.add('taken');
                     btn.disabled = true;
@@ -27,8 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     btn.classList.add('taken');
                     btn.disabled = true;
-                    btn.style.backgroundColor = 'grey';
-                    btn.style.color = '#fff';
 
                     console.log(text);
                 };

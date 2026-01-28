@@ -60,6 +60,18 @@ h1 {
     color: #E3E3DB;
 }
 
+.spotButton.regularSpot {
+    background-color: #6EB92B; /* zielony */
+}
+
+.spotButton.disabledSpot {
+    background-color: #3498db; /* niebieski */
+}
+
+.spotButton.managerSpot {
+    background-color: #f39c12; /* pomarańczowy */
+}
+
 .spotButton.taken {
     background-color: #B02F2B;
     color: #E3E3DB;

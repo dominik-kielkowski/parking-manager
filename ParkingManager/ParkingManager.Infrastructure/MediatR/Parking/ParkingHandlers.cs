@@ -28,6 +28,16 @@ namespace ParkingManager.ParkingManager.Infrastructure.MediatR.Parking
             if (spot == null) throw new InvalidOperationException("Parking spot not found");
             if (spot.Reservation != null) throw new InvalidOperationException("Spot already booked");
 
+            bool hasAccess = spot.SpotType switch
+            {
+                ParkingSpotType.Disabled => user.HasDisabledPermit,
+                ParkingSpotType.Manager => user.HasManagerAccess,
+                ParkingSpotType.Regular => true
+            };
+
+            if (!hasAccess)
+                throw new InvalidOperationException("User does not have permission for this spot");
+
             var reservation = new ParkingReservation
             {
                 ParkingSpotId = spot.Id,
@@ -41,6 +51,7 @@ namespace ParkingManager.ParkingManager.Infrastructure.MediatR.Parking
             return $"Spot {spot.SpotNumber} booked for {user.UserName}";
         }
 
+
         public async Task<IEnumerable<object>> Handle(GetParkingSpotsQuery request, CancellationToken cancellationToken)
         {
             var spots = await _context.ParkingSpots
@@ -50,7 +61,8 @@ namespace ParkingManager.ParkingManager.Infrastructure.MediatR.Parking
             return spots.Select(s => new
             {
                 s.SpotNumber,
-                IsTaken = s.Reservation != null
+                IsTaken = s.Reservation != null,
+                s.SpotType
             });
         }
     }

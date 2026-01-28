@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using ParkingManager.ParkingManager.Application.Interfaces;
 using ParkingManager.ParkingManager.Domain;
 
@@ -17,12 +18,20 @@ public class JsonParkingSpotFactory : IParkingSpotFactory
     {
         var json = File.ReadAllText(_filePath);
 
-        var spots = JsonSerializer.Deserialize<List<ParkingSpot>>(json)
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,
+            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
+        };
+
+        var spots = JsonSerializer.Deserialize<List<ParkingSpot>>(json, options)
                     ?? new List<ParkingSpot>();
 
+        // Zawsze ustawiamy IsTaken na false przy seedowaniu
         return spots.Select(s => new ParkingSpot
         {
             SpotNumber = s.SpotNumber,
+            SpotType = s.SpotType,
             IsTaken = false
         });
     }
