@@ -1,22 +1,22 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const tableBody = document.querySelector('#reservationsTable tbody');
-
     if (!tableBody) return;
 
     async function loadReservations() {
         try {
-            const res = await fetch('/reservations');
+            const res = await fetch('/parking/reservations');
             const reservations = await res.json();
+
             tableBody.innerHTML = '';
 
-            reservations.forEach(resv => {
+            reservations.forEach(r => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${resv.id}</td>
-                    <td>${resv.userName}</td>
-                    <td>${resv.spotNumber}</td>
-                    <td>${resv.date}</td>
-                    <td>${resv.status}</td>
+                    <td>${r.id}</td>
+                    <td>${r.userName}</td>
+                    <td>${r.spotNumber}</td>
+                    <td>${new Date(r.date).toLocaleString()}</td>
+                    <td>${r.status}</td>
                 `;
                 tableBody.appendChild(row);
             });

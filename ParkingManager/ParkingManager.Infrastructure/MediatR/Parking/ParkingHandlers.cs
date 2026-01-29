@@ -7,7 +7,8 @@ namespace ParkingManager.ParkingManager.Infrastructure.MediatR.Parking
 {
     public class ParkingHandlers :
         IRequestHandler<BookParkingCommand, string>,
-        IRequestHandler<GetParkingSpotsQuery, IEnumerable<object>>
+        IRequestHandler<GetParkingSpotsQuery, IEnumerable<object>>,
+        IRequestHandler<GetUserReservationsQuery, IEnumerable<object>>
     {
         private readonly AppDbContext _context;
 
@@ -18,21 +19,28 @@ namespace ParkingManager.ParkingManager.Infrastructure.MediatR.Parking
 
         public async Task<string> Handle(BookParkingCommand request, CancellationToken cancellationToken)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.GitHubId == request.GithubId, cancellationToken);
-            if (user == null) throw new InvalidOperationException("User not found");
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.GitHubId == request.GithubId, cancellationToken);
+
+            if (user == null)
+                throw new InvalidOperationException("User not found");
 
             var spot = await _context.ParkingSpots
                 .Include(s => s.Reservation)
                 .FirstOrDefaultAsync(s => s.SpotNumber == request.SpotNumber, cancellationToken);
 
-            if (spot == null) throw new InvalidOperationException("Parking spot not found");
-            if (spot.Reservation != null) throw new InvalidOperationException("Spot already booked");
+            if (spot == null)
+                throw new InvalidOperationException("Parking spot not found");
+
+            if (spot.Reservation != null)
+                throw new InvalidOperationException("Spot already booked");
 
             bool hasAccess = spot.SpotType switch
             {
                 ParkingSpotType.Disabled => user.HasDisabledPermit,
                 ParkingSpotType.Manager => user.HasManagerAccess,
-                ParkingSpotType.Regular => true
+                ParkingSpotType.Regular => true,
+                _ => false
             };
 
             if (!hasAccess)
@@ -51,7 +59,6 @@ namespace ParkingManager.ParkingManager.Infrastructure.MediatR.Parking
             return $"Spot {spot.SpotNumber} booked for {user.UserName}";
         }
 
-
         public async Task<IEnumerable<object>> Handle(GetParkingSpotsQuery request, CancellationToken cancellationToken)
         {
             var spots = await _context.ParkingSpots
@@ -64,6 +71,23 @@ namespace ParkingManager.ParkingManager.Infrastructure.MediatR.Parking
                 IsTaken = s.Reservation != null,
                 s.SpotType
             });
+        }
+
+        public async Task<IEnumerable<object>> Handle(GetUserReservationsQuery request, CancellationToken cancellationToken)
+        {
+            return await _context.ParkingReservations
+                .Include(r => r.ParkingSpot)
+                .Include(r => r.User)
+                .Where(r => r.User.GitHubId == request.GithubId)
+                .Select(r => new
+                {
+                    r.Id,
+                    UserName = r.User.UserName,
+                    SpotNumber = r.ParkingSpot.SpotNumber,
+                    Date = r.ReservedAt,
+                    Status = "Active"
+                })
+                .ToListAsync(cancellationToken);
         }
     }
 }
