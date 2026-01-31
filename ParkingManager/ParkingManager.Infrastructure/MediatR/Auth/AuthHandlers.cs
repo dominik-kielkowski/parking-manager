@@ -53,11 +53,17 @@ namespace ParkingManager.ParkingManager.Infrastructure.MediatR.Auth
 
         public async Task<object> Handle(GetCurrentUserQuery request, CancellationToken cancellationToken)
         {
-            var githubId = request.User.FindFirst("urn:github:id")!.Value;
+            var githubId = request.User.FindFirst("urn:github:id")?.Value;
+
+            if (string.IsNullOrEmpty(githubId))
+                return new { isAuthenticated = false };
 
             var dbUser = await _context.Users
                 .AsNoTracking()
-                .FirstAsync(u => u.GitHubId == githubId, cancellationToken);
+                .FirstOrDefaultAsync(u => u.GitHubId == githubId, cancellationToken);
+
+            if (dbUser == null)
+                return new { isAuthenticated = false };
 
             return new
             {

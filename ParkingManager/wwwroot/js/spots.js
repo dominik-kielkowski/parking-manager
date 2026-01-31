@@ -13,8 +13,13 @@ document.addEventListener("DOMContentLoaded", () => {
   async function loadSpots() {
     try {
       const response = await fetch(spotsUrl);
-      const spots = await response.json();
+      if (!response.ok) {
+        const text = await response.text();
+        alert(`Failed to load spots: ${text}`);
+        return;
+      }
 
+      const spots = await response.json();
       const grid = document.getElementById("spotsGrid");
       grid.innerHTML = "";
 
@@ -38,29 +43,24 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             if (!res.ok) {
-              let errorText;
-              try {
-                const errorJson = await res.json();
-                errorText = errorJson.error || JSON.stringify(errorJson);
-              } catch {
-                errorText = await res.text();
-              }
-              alert(`Booking failed: ${errorText}`);
+              const text = await res.text();
+              alert(`Booking failed: ${text}`);
               return;
             }
 
             alert(`Spot ${spot.spotNumber} booked successfully!`);
             location.reload();
           } catch (err) {
-            alert(`Network error while booking: ${err}`);
+            console.error("Network error:", err);
+            alert("Network error while booking");
           }
         };
 
         grid.appendChild(btn);
       });
     } catch (err) {
-      alert(`Error loading spots: ${err}`);
       console.error("Error loading spots:", err);
+      alert("Error loading parking spots");
     }
   }
 

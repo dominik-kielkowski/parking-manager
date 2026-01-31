@@ -5,23 +5,37 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function loadReservations() {
         try {
             const res = await fetch('/parking/reservations');
-            const reservations = await res.json();
 
+            if (!res.ok) {
+                const text = await res.text();
+                alert(`Failed to load reservations: ${text}`);
+                tableBody.innerHTML = '<tr><td colspan="5">Error loading reservations</td></tr>';
+                return;
+            }
+
+            const reservations = await res.json();
             tableBody.innerHTML = '';
 
-            reservations.forEach(r => {
+            if (!reservations.length) {
+                tableBody.innerHTML = '<tr><td colspan="5">No reservations</td></tr>';
+                return;
+            }
+
+            reservations.forEach(resv => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${r.id}</td>
-                    <td>${r.userName}</td>
-                    <td>${r.spotNumber}</td>
-                    <td>${new Date(r.date).toLocaleString()}</td>
-                    <td>${r.status}</td>
+                    <td>${resv.id}</td>
+                    <td>${resv.userName}</td>
+                    <td>${resv.spotNumber}</td>
+                    <td>${new Date(resv.date).toLocaleString()}</td>
+                    <td>${resv.status}</td>
                 `;
                 tableBody.appendChild(row);
             });
         } catch (err) {
             console.error('Error loading reservations:', err);
+            alert('Error loading reservations');
+            tableBody.innerHTML = '<tr><td colspan="5">Error loading reservations</td></tr>';
         }
     }
 

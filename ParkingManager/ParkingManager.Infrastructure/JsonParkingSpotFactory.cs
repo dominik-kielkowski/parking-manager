@@ -27,7 +27,6 @@ public class JsonParkingSpotFactory : IParkingSpotFactory
         var spots = JsonSerializer.Deserialize<List<ParkingSpot>>(json, options)
                     ?? new List<ParkingSpot>();
 
-        // Zawsze ustawiamy IsTaken na false przy seedowaniu
         return spots.Select(s => new ParkingSpot
         {
             SpotNumber = s.SpotNumber,
