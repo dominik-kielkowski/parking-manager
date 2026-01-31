@@ -22,8 +22,6 @@ namespace ParkingManager.ParkingManager.Infrastructure.MediatR.Auth
 
         public Task<string> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
-            // In the original controller, redirect URL is generated from Url.Action
-            // For simplicity, let's return a fixed callback path; the controller can wrap it
             return Task.FromResult("/auth/callback");
         }
 
@@ -53,20 +51,23 @@ namespace ParkingManager.ParkingManager.Infrastructure.MediatR.Auth
             return newUser;
         }
 
-        public Task<object> Handle(GetCurrentUserQuery request, CancellationToken cancellationToken)
+        public async Task<object> Handle(GetCurrentUserQuery request, CancellationToken cancellationToken)
         {
-            var user = request.User;
+            var githubId = request.User.FindFirst("urn:github:id")!.Value;
 
-            if (!(user.Identity?.IsAuthenticated ?? false))
-                return Task.FromResult<object>(new { IsAuthenticated = false });
+            var dbUser = await _context.Users
+                .AsNoTracking()
+                .FirstAsync(u => u.GitHubId == githubId, cancellationToken);
 
-            return Task.FromResult<object>(new
+            return new
             {
-                IsAuthenticated = true,
-                UserName = user.Identity.Name
-            });
+                isAuthenticated = true,
+                userName = dbUser.UserName,
+                isAdmin = dbUser.IsAdmin,
+                hasManagerAccess = dbUser.HasManagerAccess
+            };
         }
-
+        
         public async Task Handle(LogoutCommand request, CancellationToken cancellationToken)
         {
             await request.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);

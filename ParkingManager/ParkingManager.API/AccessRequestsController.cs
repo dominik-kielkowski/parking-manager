@@ -5,7 +5,7 @@ using ParkingManager.ParkingManager.Infrastructure.MediatR.Request;
 namespace ParkingManager.ParkingManager.API;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class AccessRequestsController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -16,37 +16,27 @@ public class AccessRequestsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateRequest([FromBody] AccessRequestCommands.CreateAccessRequestCommand command)
+    public async Task<IActionResult> CreateRequest(
+        [FromBody] AccessRequestCommands.CreateAccessRequestCommand command)
     {
-        try
+        var request = await _mediator.Send(command);
+
+        return Ok(new
         {
-            var request = await _mediator.Send(command);
-            return Ok(new 
-            { 
-                RequestId = request.Id,
-                UserId = request.User.Id,
-                request.User.UserName,
-                request.IsApproved
-            });
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+            request.Id,
+            request.UserId,
+            request.User.UserName,
+            Type = request.GetType().Name,
+            request.IsApproved
+        });
     }
 
     [HttpPost("review")]
-    public async Task<IActionResult> ReviewRequest([FromBody] AccessRequestCommands.ReviewAccessRequestCommand command)
+    public async Task<IActionResult> ReviewRequest(
+        [FromBody] AccessRequestCommands.ReviewAccessRequestCommand command)
     {
-        try
-        {
-            await _mediator.Send(command);
-            return Ok(new { message = "Request reviewed successfully" });
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        await _mediator.Send(command);
+        return Ok();
     }
 
     [HttpGet("{userId}")]
@@ -54,11 +44,25 @@ public class AccessRequestsController : ControllerBase
     {
         var requests = await _mediator.Send(new GetUserRequestsQuery(userId));
 
-        return Ok(requests.Select(r => new 
-        { 
-            r.Id, 
-            Type = r.GetType().Name, 
-            r.IsApproved 
+        return Ok(requests.Select(r => new
+        {
+            r.Id,
+            Type = r.GetType().Name,
+            r.IsApproved
+        }));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllRequests()
+    {
+        var requests = await _mediator.Send(new GetAllAccessRequestsQuery());
+
+        return Ok(requests.Select(r => new
+        {
+            r.Id,
+            UserName = r.User.UserName,
+            Type = r.GetType().Name,
+            r.IsApproved
         }));
     }
 }

@@ -8,7 +8,8 @@ namespace ParkingManager.ParkingManager.Infrastructure.MediatR.Request;
 public class AccessRequestHandlers :
     IRequestHandler<AccessRequestCommands.CreateAccessRequestCommand, AccessRequest>,
     IRequestHandler<AccessRequestCommands.ReviewAccessRequestCommand, Unit>,
-    IRequestHandler<GetUserRequestsQuery, List<AccessRequest>>
+    IRequestHandler<GetUserRequestsQuery, List<AccessRequest>>,
+    IRequestHandler<GetAllAccessRequestsQuery, List<AccessRequest>>
 {
     private readonly AppDbContext _context;
 
@@ -45,7 +46,7 @@ public class AccessRequestHandlers :
         CancellationToken cancellationToken)
     {
         var request = await _context.AccessRequests
-            .Include(ar => ar.User)
+            .Include(r => r.User)
             .FirstOrDefaultAsync(r => r.Id == command.RequestId, cancellationToken)
             ?? throw new Exception("Request not found");
 
@@ -66,7 +67,16 @@ public class AccessRequestHandlers :
     {
         return await _context.AccessRequests
             .Include(r => r.User)
-            .Where(r => r.User.Id == query.UserId)
+            .Where(r => r.UserId == query.UserId)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<List<AccessRequest>> Handle(
+        GetAllAccessRequestsQuery query,
+        CancellationToken cancellationToken)
+    {
+        return await _context.AccessRequests
+            .Include(r => r.User)
             .ToListAsync(cancellationToken);
     }
 }

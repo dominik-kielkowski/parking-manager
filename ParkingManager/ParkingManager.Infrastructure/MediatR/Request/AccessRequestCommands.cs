@@ -13,3 +13,4 @@ public static class AccessRequestCommands
 }
 
 public record GetUserRequestsQuery(int UserId) : IRequest<List<AccessRequest>>;
+public record GetAllAccessRequestsQuery() : IRequest<List<AccessRequest>>;
