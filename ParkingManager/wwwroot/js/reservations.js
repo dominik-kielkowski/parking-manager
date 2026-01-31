@@ -6,9 +6,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const res = await fetch('/parking/reservations');
 
+            if (res.status === 401) {
+                tableBody.innerHTML = '';
+                return;
+            }
+
             if (!res.ok) {
-                const text = await res.text();
-                alert(`Failed to load reservations: ${text}`);
+                console.error('Failed to load reservations:', res.status);
                 tableBody.innerHTML = '<tr><td colspan="5">Error loading reservations</td></tr>';
                 return;
             }
@@ -34,7 +38,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         } catch (err) {
             console.error('Error loading reservations:', err);
-            alert('Error loading reservations');
             tableBody.innerHTML = '<tr><td colspan="5">Error loading reservations</td></tr>';
         }
     }

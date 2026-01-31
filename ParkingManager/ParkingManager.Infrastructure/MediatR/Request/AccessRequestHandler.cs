@@ -56,9 +56,10 @@ public class AccessRequestHandlers :
             .FirstOrDefaultAsync(r => r.Id == command.RequestId, cancellationToken)
             ?? throw new Exception("Request not found");
 
+        var githubId = _httpContextAccessor.HttpContext?.User?.FindFirst("urn:github:id")?.Value;
         var admin = await _context.Users
-            .FirstOrDefaultAsync(u => u.Id == command.AdminId && u.IsAdmin, cancellationToken)
-            ?? throw new Exception("Admin not found");
+            .FirstOrDefaultAsync(u => u.GitHubId == githubId && u.IsAdmin, cancellationToken)
+            ?? throw new Exception("Admin not found or not logged in");
 
         request.IsApproved = command.Approve;
         request.Apply();
