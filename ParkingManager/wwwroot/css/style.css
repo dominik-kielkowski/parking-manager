@@ -149,3 +149,73 @@ td button:last-child {
     background-color: #b02f2b; /* Reject - red */
     color: #e3e3db;
 }
+
+#sendRequestScreen {
+    margin-top: 40px;
+}
+
+#sendRequestScreen h1 {
+    margin-bottom: 25px;
+    font-size: 1.8rem;
+}
+
+#requestForm {
+    background-color: #3a3f50;
+    padding: 25px 30px;
+    border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+#requestForm label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: #e3e3db;
+}
+
+#requestForm select,
+#requestForm input,
+#requestForm textarea {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 18px;
+    border-radius: 6px;
+    border: 1px solid #555;
+    background-color: #e3e3db;
+    color: #2b2e3c;
+    font-size: 0.95rem;
+}
+
+#requestForm select:focus,
+#requestForm input:focus,
+#requestForm textarea:focus {
+    outline: none;
+    border-color: #6eb92b;
+    box-shadow: 0 0 0 2px rgba(110, 185, 43, 0.25);
+}
+
+#requestForm textarea {
+    resize: vertical;
+    min-height: 90px;
+}
+
+#requestForm button {
+    width: 100%;
+    padding: 12px;
+    background-color: #6eb92b;
+    color: #2b2e3c;
+    font-weight: bold;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+#requestForm button:hover {
+    background-color: #7fd13a;
+}
+
+#requestForm button:active {
+    transform: scale(0.98);
+}

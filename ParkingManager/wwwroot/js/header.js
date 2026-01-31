@@ -10,8 +10,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const res = await fetch("/auth/current", { credentials: "include" });
     const data = await res.json();
 
-    console.log("Current user data:", data);
-
     if (data.isAuthenticated) {
       usernameSpan.textContent = `Hello, ${data.userName}`;
       authBtn.textContent = "Logout";
@@ -23,7 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (data.isAdmin) {
         adminBtn.style.display = "inline-block";
       }
-      showScreen("spots"); // Default screen
+      showScreen("spots");
     } else {
       usernameSpan.textContent = "";
       authBtn.textContent = "Login with GitHub";

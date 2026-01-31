@@ -32,16 +32,19 @@
             <div id="spotsGrid"></div>
         </div>
 
-        <div id="sendRequestScreen" style="display: none">
-            <h1>Send Request</h1>
-            <form id="requestForm">
-                <label for="spotNumber">Spot Number:</label>
-                <input type="number" id="spotNumber" required /><br /><br />
-                <label for="reason">Reason:</label>
-                <textarea id="reason" required></textarea><br /><br />
-                <button type="submit">Submit Request</button>
-            </form>
-        </div>
+                <div id="sendRequestScreen" style="display: none">
+                    <h1>Send Access Request</h1>
+                    <form id="requestForm">
+                        <label for="requestedAccess">Request type:</label>
+                        <select id="requestedAccess" required>
+                            <option value="DisabledPermit">Disabled permit</option>
+                            <option value="Manager">Manager access</option>
+                        </select>
+
+                        <button type="submit">Submit Request</button>
+                    </form>
+                </div>
+
 
         <div id="adminScreen" style="display: none">
             <h1>Admin Panel - Requests</h1>

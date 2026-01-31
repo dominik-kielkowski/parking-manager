@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ParkingManager.ParkingManager.Domain;
 using ParkingManager.ParkingManager.Infrastructure.Database;
+using System.Security.Claims;
 
 namespace ParkingManager.ParkingManager.Infrastructure.MediatR.Request;
 
@@ -12,19 +13,24 @@ public class AccessRequestHandlers :
     IRequestHandler<GetAllAccessRequestsQuery, List<AccessRequest>>
 {
     private readonly AppDbContext _context;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public AccessRequestHandlers(AppDbContext context)
+    public AccessRequestHandlers(AppDbContext context, IHttpContextAccessor httpContextAccessor)
     {
         _context = context;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<AccessRequest> Handle(
         AccessRequestCommands.CreateAccessRequestCommand command,
         CancellationToken cancellationToken)
     {
+        var githubId = _httpContextAccessor.HttpContext?.User?.FindFirst("urn:github:id")?.Value;
+        if (githubId == null) throw new Exception("User not authenticated");
+
         var user = await _context.Users
             .Include(u => u.AccessRequests)
-            .FirstOrDefaultAsync(u => u.Id == command.UserId, cancellationToken)
+            .FirstOrDefaultAsync(u => u.GitHubId == githubId, cancellationToken)
             ?? throw new Exception("User not found");
 
         AccessRequest request = command.RequestedAccess switch
@@ -61,22 +67,14 @@ public class AccessRequestHandlers :
         return Unit.Value;
     }
 
-    public async Task<List<AccessRequest>> Handle(
-        GetUserRequestsQuery query,
-        CancellationToken cancellationToken)
-    {
-        return await _context.AccessRequests
+    public async Task<List<AccessRequest>> Handle(GetUserRequestsQuery query, CancellationToken cancellationToken)
+        => await _context.AccessRequests
             .Include(r => r.User)
             .Where(r => r.UserId == query.UserId)
             .ToListAsync(cancellationToken);
-    }
 
-    public async Task<List<AccessRequest>> Handle(
-        GetAllAccessRequestsQuery query,
-        CancellationToken cancellationToken)
-    {
-        return await _context.AccessRequests
+    public async Task<List<AccessRequest>> Handle(GetAllAccessRequestsQuery query, CancellationToken cancellationToken)
+        => await _context.AccessRequests
             .Include(r => r.User)
             .ToListAsync(cancellationToken);
-    }
 }

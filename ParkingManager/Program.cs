@@ -6,9 +6,16 @@ using ParkingManager.ParkingManager.Infrastructure.MediatR;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+        options.JsonSerializerOptions.Converters.Add(
+            new System.Text.Json.Serialization.JsonStringEnumConverter()
+        )
+    );
+
 builder.Services.AddOpenApi();
 
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddSqliteDatabase<AppDbContext>(builder.Configuration);
 builder.AddGitHubAuthentication();
 builder.Services.ConfigureMediatR();
@@ -32,6 +39,7 @@ using (var scope = app.Services.CreateScope())
     ParkingSpotSeeder.Instance.Seed(context, factory);
 }
 
+app.UseDefaultFiles();
 app.UseStaticFiles();
 
 app.UseSwagger();
